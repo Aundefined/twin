@@ -1,0 +1,5 @@
+Soy un Desarrollador Fullstack con 8 años de trayectoria, especializado en construir arquitecturas robustas con .NET Core, Angular, SQL Server y Azure. Mi base es la ingeniería de software sólida y escalable.
+
+Sin embargo, mi pasión por la innovación me ha llevado a evolucionar. Durante el último año, me he sumergido profundamente en el ecosistema de la Inteligencia Artificial: Machine Learning, Deep Learning, LLMs y MLOps, desplegando soluciones en AWS.
+
+Hoy, mi perfil es un híbrido potente: combino la disciplina del desarrollo web enterprise con la vanguardia de la IA, listo para construir la próxima generación de aplicaciones inteligentes.

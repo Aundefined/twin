@@ -1,0 +1,617 @@
+# data.aws_caller_identity.current:
+data "aws_caller_identity" "current" {
+    account_id = "483874865128"
+    arn        = "arn:aws:iam::483874865128:user/aiengineer"
+    id         = "483874865128"
+    user_id    = "AIDAXBKJQP7UHCO7AYCNT"
+}
+
+# aws_apigatewayv2_api.main:
+resource "aws_apigatewayv2_api" "main" {
+    api_endpoint                 = "https://07lz5pg0qg.execute-api.eu-south-2.amazonaws.com"
+    api_key_selection_expression = "$request.header.x-api-key"
+    arn                          = "arn:aws:apigateway:eu-south-2::/apis/07lz5pg0qg"
+    description                  = null
+    disable_execute_api_endpoint = false
+    execution_arn                = "arn:aws:execute-api:eu-south-2:483874865128:07lz5pg0qg"
+    id                           = "07lz5pg0qg"
+    ip_address_type              = "ipv4"
+    name                         = "twin-dev-api-gateway"
+    protocol_type                = "HTTP"
+    region                       = "eu-south-2"
+    route_selection_expression   = "$request.method $request.path"
+    tags                         = {
+        "Environment" = "dev"
+        "ManagedBy"   = "terraform"
+        "Project"     = "twin"
+    }
+    tags_all                     = {
+        "Environment" = "dev"
+        "ManagedBy"   = "terraform"
+        "Project"     = "twin"
+    }
+    version                      = null
+
+    cors_configuration {
+        allow_credentials = false
+        allow_headers     = [
+            "*",
+        ]
+        allow_methods     = [
+            "GET",
+            "OPTIONS",
+            "POST",
+        ]
+        allow_origins     = [
+            "*",
+        ]
+        max_age           = 300
+    }
+}
+
+# aws_apigatewayv2_integration.lambda:
+resource "aws_apigatewayv2_integration" "lambda" {
+    api_id                                    = "07lz5pg0qg"
+    connection_id                             = null
+    connection_type                           = "INTERNET"
+    content_handling_strategy                 = null
+    credentials_arn                           = null
+    description                               = null
+    id                                        = "savsubv"
+    integration_method                        = "POST"
+    integration_response_selection_expression = null
+    integration_subtype                       = null
+    integration_type                          = "AWS_PROXY"
+    integration_uri                           = "arn:aws:apigateway:eu-south-2:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-south-2:483874865128:function:twin-dev-api/invocations"
+    passthrough_behavior                      = null
+    payload_format_version                    = "1.0"
+    region                                    = "eu-south-2"
+    template_selection_expression             = null
+    timeout_milliseconds                      = 30000
+}
+
+# aws_apigatewayv2_route.get_health:
+resource "aws_apigatewayv2_route" "get_health" {
+    api_id                              = "07lz5pg0qg"
+    api_key_required                    = false
+    authorization_type                  = "NONE"
+    authorizer_id                       = null
+    id                                  = "kd325zf"
+    model_selection_expression          = null
+    operation_name                      = null
+    region                              = "eu-south-2"
+    route_key                           = "GET /health"
+    route_response_selection_expression = null
+    target                              = "integrations/savsubv"
+}
+
+# aws_apigatewayv2_route.get_root:
+resource "aws_apigatewayv2_route" "get_root" {
+    api_id                              = "07lz5pg0qg"
+    api_key_required                    = false
+    authorization_type                  = "NONE"
+    authorizer_id                       = null
+    id                                  = "ybv8rjp"
+    model_selection_expression          = null
+    operation_name                      = null
+    region                              = "eu-south-2"
+    route_key                           = "GET /"
+    route_response_selection_expression = null
+    target                              = "integrations/savsubv"
+}
+
+# aws_apigatewayv2_route.post_chat:
+resource "aws_apigatewayv2_route" "post_chat" {
+    api_id                              = "07lz5pg0qg"
+    api_key_required                    = false
+    authorization_type                  = "NONE"
+    authorizer_id                       = null
+    id                                  = "ya6cwkm"
+    model_selection_expression          = null
+    operation_name                      = null
+    region                              = "eu-south-2"
+    route_key                           = "POST /chat"
+    route_response_selection_expression = null
+    target                              = "integrations/savsubv"
+}
+
+# aws_apigatewayv2_stage.default:
+resource "aws_apigatewayv2_stage" "default" {
+    api_id                = "07lz5pg0qg"
+    arn                   = "arn:aws:apigateway:eu-south-2::/apis/07lz5pg0qg/stages/$default"
+    auto_deploy           = true
+    client_certificate_id = null
+    deployment_id         = null
+    description           = null
+    execution_arn         = "arn:aws:execute-api:eu-south-2:483874865128:07lz5pg0qg/$default"
+    id                    = "$default"
+    invoke_url            = "https://07lz5pg0qg.execute-api.eu-south-2.amazonaws.com/"
+    name                  = "$default"
+    region                = "eu-south-2"
+    tags                  = {
+        "Environment" = "dev"
+        "ManagedBy"   = "terraform"
+        "Project"     = "twin"
+    }
+    tags_all              = {
+        "Environment" = "dev"
+        "ManagedBy"   = "terraform"
+        "Project"     = "twin"
+    }
+
+    default_route_settings {
+        data_trace_enabled       = false
+        detailed_metrics_enabled = false
+        logging_level            = null
+        throttling_burst_limit   = 10
+        throttling_rate_limit    = 5
+    }
+}
+
+# aws_cloudfront_distribution.main:
+resource "aws_cloudfront_distribution" "main" {
+    anycast_ip_list_id              = null
+    arn                             = "arn:aws:cloudfront::483874865128:distribution/E2E5Q7TQKXHN7F"
+    caller_reference                = "terraform-20260218163409903000000001"
+    continuous_deployment_policy_id = null
+    default_root_object             = "index.html"
+    domain_name                     = "d3185y6h3wyph5.cloudfront.net"
+    enabled                         = true
+    etag                            = "E23ZP02F085DFQ"
+    hosted_zone_id                  = "Z2FDTNDATAQYW2"
+    http_version                    = "http2"
+    id                              = "E2E5Q7TQKXHN7F"
+    in_progress_validation_batches  = 0
+    is_ipv6_enabled                 = true
+    last_modified_time              = "2026-02-18 16:34:10.832 +0000 UTC"
+    logging_v1_enabled              = false
+    price_class                     = "PriceClass_All"
+    retain_on_delete                = false
+    staging                         = false
+    status                          = "Deployed"
+    tags                            = {
+        "Environment" = "dev"
+        "ManagedBy"   = "terraform"
+        "Project"     = "twin"
+    }
+    tags_all                        = {
+        "Environment" = "dev"
+        "ManagedBy"   = "terraform"
+        "Project"     = "twin"
+    }
+    trusted_key_groups              = [
+        {
+            enabled = false
+            items   = []
+        },
+    ]
+    trusted_signers                 = [
+        {
+            enabled = false
+            items   = []
+        },
+    ]
+    wait_for_deployment             = true
+    web_acl_id                      = null
+
+    custom_error_response {
+        error_code         = 404
+        response_code      = 200
+        response_page_path = "/index.html"
+    }
+
+    default_cache_behavior {
+        allowed_methods            = [
+            "DELETE",
+            "GET",
+            "HEAD",
+            "OPTIONS",
+            "PATCH",
+            "POST",
+            "PUT",
+        ]
+        cache_policy_id            = null
+        cached_methods             = [
+            "GET",
+            "HEAD",
+        ]
+        compress                   = false
+        default_ttl                = 3600
+        field_level_encryption_id  = null
+        max_ttl                    = 86400
+        min_ttl                    = 0
+        origin_request_policy_id   = null
+        realtime_log_config_arn    = null
+        response_headers_policy_id = null
+        smooth_streaming           = false
+        target_origin_id           = "S3-twin-dev-frontend-483874865128"
+        trusted_key_groups         = []
+        trusted_signers            = []
+        viewer_protocol_policy     = "redirect-to-https"
+
+        forwarded_values {
+            headers                 = []
+            query_string            = false
+            query_string_cache_keys = []
+
+            cookies {
+                forward           = "none"
+                whitelisted_names = []
+            }
+        }
+
+        grpc_config {
+            enabled = false
+        }
+    }
+
+    origin {
+        connection_attempts         = 3
+        connection_timeout          = 10
+        domain_name                 = "twin-dev-frontend-483874865128.s3-website.eu-south-2.amazonaws.com"
+        origin_access_control_id    = null
+        origin_id                   = "S3-twin-dev-frontend-483874865128"
+        origin_path                 = null
+        response_completion_timeout = 0
+
+        custom_origin_config {
+            http_port                = 80
+            https_port               = 443
+            ip_address_type          = null
+            origin_keepalive_timeout = 5
+            origin_protocol_policy   = "http-only"
+            origin_read_timeout      = 30
+            origin_ssl_protocols     = [
+                "TLSv1.2",
+            ]
+        }
+    }
+
+    restrictions {
+        geo_restriction {
+            locations        = []
+            restriction_type = "none"
+        }
+    }
+
+    viewer_certificate {
+        acm_certificate_arn            = null
+        cloudfront_default_certificate = true
+        iam_certificate_id             = null
+        minimum_protocol_version       = "TLSv1"
+        ssl_support_method             = null
+    }
+}
+
+# aws_iam_role.lambda_role:
+resource "aws_iam_role" "lambda_role" {
+    arn                   = "arn:aws:iam::483874865128:role/twin-dev-lambda-role"
+    assume_role_policy    = jsonencode(
+        {
+            Statement = [
+                {
+                    Action    = "sts:AssumeRole"
+                    Effect    = "Allow"
+                    Principal = {
+                        Service = "lambda.amazonaws.com"
+                    }
+                },
+            ]
+            Version   = "2012-10-17"
+        }
+    )
+    create_date           = "2026-02-18T16:34:09Z"
+    description           = null
+    force_detach_policies = false
+    id                    = "twin-dev-lambda-role"
+    managed_policy_arns   = []
+    max_session_duration  = 3600
+    name                  = "twin-dev-lambda-role"
+    name_prefix           = null
+    path                  = "/"
+    permissions_boundary  = null
+    tags                  = {
+        "Environment" = "dev"
+        "ManagedBy"   = "terraform"
+        "Project"     = "twin"
+    }
+    tags_all              = {
+        "Environment" = "dev"
+        "ManagedBy"   = "terraform"
+        "Project"     = "twin"
+    }
+    unique_id             = "AROAXBKJQP7UO4NWFEFQT"
+}
+
+# aws_iam_role_policy_attachment.lambda_basic:
+resource "aws_iam_role_policy_attachment" "lambda_basic" {
+    id         = "twin-dev-lambda-role/arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+    policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+    role       = "twin-dev-lambda-role"
+}
+
+# aws_iam_role_policy_attachment.lambda_bedrock:
+resource "aws_iam_role_policy_attachment" "lambda_bedrock" {
+    id         = "twin-dev-lambda-role/arn:aws:iam::aws:policy/AmazonBedrockFullAccess"
+    policy_arn = "arn:aws:iam::aws:policy/AmazonBedrockFullAccess"
+    role       = "twin-dev-lambda-role"
+}
+
+# aws_iam_role_policy_attachment.lambda_s3:
+resource "aws_iam_role_policy_attachment" "lambda_s3" {
+    id         = "twin-dev-lambda-role/arn:aws:iam::aws:policy/AmazonS3FullAccess"
+    policy_arn = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+    role       = "twin-dev-lambda-role"
+}
+
+# aws_lambda_function.api:
+resource "aws_lambda_function" "api" {
+    architectures                  = [
+        "x86_64",
+    ]
+    arn                            = "arn:aws:lambda:eu-south-2:483874865128:function:twin-dev-api"
+    code_sha256                    = "BfpYeFEPpcp/oe3X1TMljdNa7bwg0fExaOa5sOSVDdA="
+    description                    = null
+    filename                       = "./../backend/lambda-deployment.zip"
+    function_name                  = "twin-dev-api"
+    handler                        = "lambda_handler.handler"
+    id                             = "twin-dev-api"
+    image_uri                      = null
+    invoke_arn                     = "arn:aws:apigateway:eu-south-2:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-south-2:483874865128:function:twin-dev-api/invocations"
+    kms_key_arn                    = null
+    last_modified                  = "2026-02-18T16:37:46.568+0000"
+    memory_size                    = 128
+    package_type                   = "Zip"
+    publish                        = false
+    qualified_arn                  = "arn:aws:lambda:eu-south-2:483874865128:function:twin-dev-api:$LATEST"
+    qualified_invoke_arn           = "arn:aws:apigateway:eu-south-2:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-south-2:483874865128:function:twin-dev-api:$LATEST/invocations"
+    region                         = "eu-south-2"
+    reserved_concurrent_executions = -1
+    response_streaming_invoke_arn  = "arn:aws:apigateway:eu-south-2:lambda:path/2021-11-15/functions/arn:aws:lambda:eu-south-2:483874865128:function:twin-dev-api/response-streaming-invocations"
+    role                           = "arn:aws:iam::483874865128:role/twin-dev-lambda-role"
+    runtime                        = "python3.12"
+    signing_job_arn                = null
+    signing_profile_version_arn    = null
+    skip_destroy                   = false
+    source_code_hash               = "BfpYeFEPpcp/oe3X1TMljdNa7bwg0fExaOa5sOSVDdA="
+    source_code_size               = 22922958
+    source_kms_key_arn             = null
+    tags                           = {
+        "Environment" = "dev"
+        "ManagedBy"   = "terraform"
+        "Project"     = "twin"
+    }
+    tags_all                       = {
+        "Environment" = "dev"
+        "ManagedBy"   = "terraform"
+        "Project"     = "twin"
+    }
+    timeout                        = 60
+    version                        = "$LATEST"
+
+    environment {
+        variables = {
+            "BEDROCK_MODEL_ID" = "amazon.nova-micro-v1:0"
+            "CORS_ORIGINS"     = "https://d3185y6h3wyph5.cloudfront.net"
+            "S3_BUCKET"        = "twin-dev-memory-483874865128"
+            "USE_S3"           = "true"
+        }
+    }
+
+    ephemeral_storage {
+        size = 512
+    }
+
+    logging_config {
+        application_log_level = null
+        log_format            = "Text"
+        log_group             = "/aws/lambda/twin-dev-api"
+        system_log_level      = null
+    }
+
+    tracing_config {
+        mode = "PassThrough"
+    }
+}
+
+# aws_lambda_permission.api_gw:
+resource "aws_lambda_permission" "api_gw" {
+    action              = "lambda:InvokeFunction"
+    function_name       = "twin-dev-api"
+    id                  = "AllowExecutionFromAPIGateway"
+    principal           = "apigateway.amazonaws.com"
+    qualifier           = null
+    region              = "eu-south-2"
+    source_arn          = "arn:aws:execute-api:eu-south-2:483874865128:07lz5pg0qg/*/*"
+    statement_id        = "AllowExecutionFromAPIGateway"
+    statement_id_prefix = null
+}
+
+# aws_s3_bucket.frontend:
+resource "aws_s3_bucket" "frontend" {
+    acceleration_status         = null
+    arn                         = "arn:aws:s3:::twin-dev-frontend-483874865128"
+    bucket                      = "twin-dev-frontend-483874865128"
+    bucket_domain_name          = "twin-dev-frontend-483874865128.s3.amazonaws.com"
+    bucket_prefix               = null
+    bucket_region               = "eu-south-2"
+    bucket_regional_domain_name = "twin-dev-frontend-483874865128.s3.eu-south-2.amazonaws.com"
+    force_destroy               = false
+    hosted_zone_id              = "Z0081959F7139GRJC19J"
+    id                          = "twin-dev-frontend-483874865128"
+    object_lock_enabled         = false
+    policy                      = null
+    region                      = "eu-south-2"
+    request_payer               = "BucketOwner"
+    tags                        = {
+        "Environment" = "dev"
+        "ManagedBy"   = "terraform"
+        "Project"     = "twin"
+    }
+    tags_all                    = {
+        "Environment" = "dev"
+        "ManagedBy"   = "terraform"
+        "Project"     = "twin"
+    }
+
+    grant {
+        id          = "fd967d0618a5d36baa3b24d26520d1d8b2e9efc766e4a9b38f1f6bd0a7c9dbc6"
+        permissions = [
+            "FULL_CONTROL",
+        ]
+        type        = "CanonicalUser"
+        uri         = null
+    }
+
+    server_side_encryption_configuration {
+        rule {
+            bucket_key_enabled = false
+
+            apply_server_side_encryption_by_default {
+                kms_master_key_id = null
+                sse_algorithm     = "AES256"
+            }
+        }
+    }
+
+    versioning {
+        enabled    = false
+        mfa_delete = false
+    }
+}
+
+# aws_s3_bucket.memory:
+resource "aws_s3_bucket" "memory" {
+    acceleration_status         = null
+    arn                         = "arn:aws:s3:::twin-dev-memory-483874865128"
+    bucket                      = "twin-dev-memory-483874865128"
+    bucket_domain_name          = "twin-dev-memory-483874865128.s3.amazonaws.com"
+    bucket_prefix               = null
+    bucket_region               = "eu-south-2"
+    bucket_regional_domain_name = "twin-dev-memory-483874865128.s3.eu-south-2.amazonaws.com"
+    force_destroy               = false
+    hosted_zone_id              = "Z0081959F7139GRJC19J"
+    id                          = "twin-dev-memory-483874865128"
+    object_lock_enabled         = false
+    policy                      = null
+    region                      = "eu-south-2"
+    request_payer               = "BucketOwner"
+    tags                        = {
+        "Environment" = "dev"
+        "ManagedBy"   = "terraform"
+        "Project"     = "twin"
+    }
+    tags_all                    = {
+        "Environment" = "dev"
+        "ManagedBy"   = "terraform"
+        "Project"     = "twin"
+    }
+
+    grant {
+        id          = "fd967d0618a5d36baa3b24d26520d1d8b2e9efc766e4a9b38f1f6bd0a7c9dbc6"
+        permissions = [
+            "FULL_CONTROL",
+        ]
+        type        = "CanonicalUser"
+        uri         = null
+    }
+
+    server_side_encryption_configuration {
+        rule {
+            bucket_key_enabled = false
+
+            apply_server_side_encryption_by_default {
+                kms_master_key_id = null
+                sse_algorithm     = "AES256"
+            }
+        }
+    }
+
+    versioning {
+        enabled    = false
+        mfa_delete = false
+    }
+}
+
+# aws_s3_bucket_ownership_controls.memory:
+resource "aws_s3_bucket_ownership_controls" "memory" {
+    bucket = "twin-dev-memory-483874865128"
+    id     = "twin-dev-memory-483874865128"
+    region = "eu-south-2"
+
+    rule {
+        object_ownership = "BucketOwnerEnforced"
+    }
+}
+
+# aws_s3_bucket_policy.frontend:
+resource "aws_s3_bucket_policy" "frontend" {
+    bucket = "twin-dev-frontend-483874865128"
+    id     = "twin-dev-frontend-483874865128"
+    policy = jsonencode(
+        {
+            Statement = [
+                {
+                    Action    = "s3:GetObject"
+                    Effect    = "Allow"
+                    Principal = "*"
+                    Resource  = "arn:aws:s3:::twin-dev-frontend-483874865128/*"
+                    Sid       = "PublicReadGetObject"
+                },
+            ]
+            Version   = "2012-10-17"
+        }
+    )
+    region = "eu-south-2"
+}
+
+# aws_s3_bucket_public_access_block.frontend:
+resource "aws_s3_bucket_public_access_block" "frontend" {
+    block_public_acls       = false
+    block_public_policy     = false
+    bucket                  = "twin-dev-frontend-483874865128"
+    id                      = "twin-dev-frontend-483874865128"
+    ignore_public_acls      = false
+    region                  = "eu-south-2"
+    restrict_public_buckets = false
+}
+
+# aws_s3_bucket_public_access_block.memory:
+resource "aws_s3_bucket_public_access_block" "memory" {
+    block_public_acls       = true
+    block_public_policy     = true
+    bucket                  = "twin-dev-memory-483874865128"
+    id                      = "twin-dev-memory-483874865128"
+    ignore_public_acls      = true
+    region                  = "eu-south-2"
+    restrict_public_buckets = true
+}
+
+# aws_s3_bucket_website_configuration.frontend:
+resource "aws_s3_bucket_website_configuration" "frontend" {
+    bucket                = "twin-dev-frontend-483874865128"
+    expected_bucket_owner = null
+    id                    = "twin-dev-frontend-483874865128"
+    region                = "eu-south-2"
+    routing_rules         = null
+    website_domain        = "s3-website.eu-south-2.amazonaws.com"
+    website_endpoint      = "twin-dev-frontend-483874865128.s3-website.eu-south-2.amazonaws.com"
+
+    error_document {
+        key = "404.html"
+    }
+
+    index_document {
+        suffix = "index.html"
+    }
+}
+
+
+Outputs:
+
+api_gateway_url = "https://07lz5pg0qg.execute-api.eu-south-2.amazonaws.com"
+cloudfront_url = "https://d3185y6h3wyph5.cloudfront.net"
+custom_domain_url = null
+lambda_function_name = "twin-dev-api"
+s3_frontend_bucket = "twin-dev-frontend-483874865128"
+s3_memory_bucket = "twin-dev-memory-483874865128"
