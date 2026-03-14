@@ -1,0 +1,64 @@
+## Proyectos en Producción
+
+### Aidoo
+
+**¿Qué es?**
+Aidoo es una aplicación web de resúmenes de prensa automáticos, desplegada en producción. Recopila noticias de múltiples fuentes, selecciona las 20 mejores con IA, genera resúmenes concisos y las categoriza automáticamente (Nacional, Internacional, Deportes, Entretenimiento). Se actualiza cada hora.
+
+**Stack tecnológico:**
+- Backend: Python/Flask
+- Base de datos: PostgreSQL con extensión pgvector
+- LLM para resúmenes: GPT-5 (OpenAI)
+- LLM para chatbot RAG: GPT-4.1-mini fine-tuneado, con streaming SSE
+- Embeddings: sentence-transformers (paraphrase-multilingual-MiniLM-L12-v2, 384 dimensiones)
+- Frontend: interfaz responsive, widget chatbot flotante con drag & resize
+
+**Características técnicas destacadas:**
+
+1. **Pipeline de noticias automático**: RSS feeds → selección IA → scraping → resúmenes → embeddings → base de datos. Se ejecuta al arrancar y cada hora.
+
+2. **Sistema RAG conversacional híbrido**: El chatbot responde preguntas sobre la actualidad usando dos métodos de búsqueda combinados:
+   - Búsqueda granular por fragmentos (1 oración = 1 fragmento, 384 dims, índice HNSW en pgvector)
+   - Búsqueda holística por embedding único (título + resumen completo)
+   - Combina ambos resultados tomando la mejor similitud (top 5 finales de hasta 10 candidatos)
+   - Streaming token a token via SSE con citas interactivas
+
+3. **Fine-tuning propio del modelo**: Se ha entrenado un modelo fine-tuneado sobre GPT-4.1-mini para capturar la personalidad, estilo de las respuestas de Aidoo y enseñarle a responder sin necesidad de system prompt.
+
+4. **Sistema de recomendaciones**: Basado en embeddings de noticias y preferencias de usuario.
+
+---
+
+### Meteo Blog
+
+**¿Qué es?**
+Meteo Blog es un proyecto MLOps en producción completamente serverless desplegado en AWS. Obtiene la previsión del tiempo para las 17 comunidades autónomas de España 5 veces al día, genera un resumen en lenguaje natural con IA y lo sirve a través de un frontend estático. Incluye un chatbot RAG que responde preguntas sobre la arquitectura del propio proyecto.
+
+**Demo en vivo:** https://dz2xr9ouy3oet.cloudfront.net
+
+**Stack tecnológico:**
+- Fuente de datos: AEMET OpenData API
+- LLM e inferencia: AWS Bedrock (Amazon Nova Micro)
+- Embeddings RAG: AWS Bedrock (Amazon Titan Embed Text v2, 256 dimensiones)
+- Vector store: FAISS (IndexFlatIP), almacenado en S3 y cargado en memoria en cold start
+- Backend: Python 3.12 en AWS Lambda (contenedores Docker/ECR)
+- Frontend: HTML + Vanilla JS + Tailwind CSS, alojado en S3 + CloudFront CDN
+- Infraestructura como código: Terraform
+- CI/CD: GitHub Actions con autenticación OIDC (sin credenciales estáticas)
+
+**Arquitectura:**
+- EventBridge Scheduler dispara la Lambda fetcher 5 veces al día (0h, 6h, 10h, 14h, 18h hora española)
+- Lambda fetcher: llama a AEMET → genera resumen con Nova Micro → escribe weather.json en S3 → invalida caché CloudFront
+- Lambda chatbot: carga índice FAISS desde S3 → embeddings con Titan Embed → búsqueda por similitud coseno (top 5) → respuesta con Nova Micro
+- Frontend SPA: lee weather.json desde CloudFront, muestra mapa SVG de España coloreado por probabilidad de lluvia, cards por comunidad y chatbot RAG
+
+**Conceptos MLOps demostrados:**
+- Pipeline de inferencia batch programado (análogo a pipelines de predicción batch en ML)
+- Pipeline RAG completo: indexación offline → búsqueda semántica → generación con contexto
+- Inferencia ML serverless (AWS Bedrock: sin gestión de modelos, sin instancias GPU)
+- Vector store minimalista (FAISS en S3, coste ~$0)
+- Infrastructure as Code reproducible con Terraform
+- Cargas de trabajo contenerizadas (Docker) para consistencia local/producción
+- CI/CD sin credenciales estáticas (federación OIDC con AWS)
+- Observabilidad con CloudWatch Logs (retención 14 días)
+- Coste total: aproximadamente $0.10/mes
